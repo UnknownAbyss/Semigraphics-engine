@@ -30,6 +30,7 @@ Layer create_layer(int width, int height, bool alpha)
 {
     Layer layer = {width, height, 0, 0};
     layer.grid = (char **)malloc(height * sizeof(char *));
+    layer.alpha = alpha;
     for (int i = 0; i < height; i++)
     {
         layer.grid[i] = (char *)malloc(width * sizeof(char));
@@ -124,7 +125,7 @@ void border(Window *win, char c)
     {
         for (int j = 0; j < win->width; j++)
         {
-            win->grid[i][j] = (i == 0 || i == win->height - 1 || j == 0 || j == win->width - 1) ? c : ' ';
+            win->grid[i][j] = (i == 0 || i == win->height - 1 || j == 0 || j == win->width - 1) ? c : win->grid[i][j];
         }
     }
 }
