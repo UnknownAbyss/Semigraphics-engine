@@ -7,6 +7,8 @@
 #include <sys/time.h>
 #include "./gstructs.h"
 
+static double delta = 0;
+
 Window create_window(int width, int height)
 {
     Window win = {width, height};
@@ -56,14 +58,14 @@ Timer create_timer(int fps)
     return t;
 }
 
-void blit(Window* win, Layer layer)
+void blit(Window *win, Layer layer)
 {
     for (int i = layer.posy; i < layer.posy + layer.height; i++)
     {
         for (int j = layer.posx; j < layer.posx + layer.width; j++)
         {
-            char c = layer.grid[i-layer.posy][j-layer.posx];
-            win->grid[i][j] = (layer.alpha && c==' ')?win->grid[i][j]:c;
+            char c = layer.grid[i - layer.posy][j - layer.posx];
+            win->grid[i][j] = (layer.alpha && c == ' ') ? win->grid[i][j] : c;
         }
     }
 }
@@ -95,6 +97,7 @@ void tick(Timer *t)
     {
     }
     t->prev = millis_time();
+    delta = t->prev - p > 500 ? 1/t->fps : (t->prev - p) / 1000.0;
 }
 
 void fill(Window *win, char c)
@@ -126,6 +129,17 @@ void border(Window *win, char c)
         for (int j = 0; j < win->width; j++)
         {
             win->grid[i][j] = (i == 0 || i == win->height - 1 || j == 0 || j == win->width - 1) ? c : win->grid[i][j];
+        }
+    }
+}
+
+void border(Layer *layer, char c)
+{
+    for (int i = 0; i < layer->height; i++)
+    {
+        for (int j = 0; j < layer->width; j++)
+        {
+            layer->grid[i][j] = (i == 0 || i == layer->height - 1 || j == 0 || j == layer->width - 1) ? c : layer->grid[i][j];
         }
     }
 }
